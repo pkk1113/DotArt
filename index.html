@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도트아트</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(10, 1fr);
+        width: 200px;
+        height: 200px;
+    }
+
+    .art {
+        width: 30px;
+        height: 30px;
+        margin: 1px;
+        background-color: pink;
+    }
+
+    .black {
+        background-color: black;
+    }
+</style>
+<body>
+    <div class="container"></div>
+</body>
+<script>
+    // 저장된 데이터 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get("a");
+
+    // 데이터 생성
+    let arr = Array(10 * 10).fill(0);
+    if(myParam != null) {
+        let savedArr = JSON.parse(atob(myParam))
+        arr = [...savedArr];
+    }
+    
+    // body에 dot 생성
+    let container = document.querySelector(".container");
+    for(var i = 0; i < arr.length; i++) {
+        let dot = document.createElement("div");
+        dot.classList.add("art");
+        
+        if(arr[i] == 1) {
+            dot.classList.toggle("black");
+        }
+        
+        dot.dataset.id = i;
+        dot.addEventListener("click", function(e) {
+            arr[e.target.dataset.id] = (arr[e.target.dataset.id] == 1) ? 0 : 1;
+            dot.classList.toggle("black");
+            // 데이터 url에 저장
+            let save = btoa(JSON.stringify(arr));
+            window.history.pushState({}, null, "?a=" + save);
+        });
+        container.appendChild(dot);
+    }
+</script>
+</html>
